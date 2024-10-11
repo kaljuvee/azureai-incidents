@@ -1,82 +1,62 @@
 [
-  [
-    "october",
-    68
-  ],
-  [
-    "incident",
-    58
-  ],
-  [
-    "manufacturing plant",
-    48
-  ],
-  [
-    "employee",
-    20
-  ],
-  [
-    "safety protocols",
-    17
-  ],
-  [
-    "worker",
-    15
-  ],
-  [
-    "future occurrences",
-    13
-  ],
-  [
-    "production",
-    12
-  ],
-  [
-    "employees",
-    11
-  ],
-  [
-    "collision",
-    11
-  ],
-  [
-    "assembly area",
-    11
-  ],
-  [
-    "forklift operator",
-    10
-  ],
-  [
-    "assembly line",
-    10
-  ],
-  [
-    "production delays",
-    10
-  ],
-  [
-    "serious injury",
-    9
-  ],
-  [
-    "review",
-    9
-  ],
-  [
-    "xyz manufacturing plant",
-    9
-  ],
-  [
-    "hand injury",
-    8
-  ],
-  [
-    "scrutiny",
-    8
-  ],
-  [
-    "production schedules",
-    8
-  ]
+  {
+    "name": "slip",
+    "ground_truth_count": 9,
+    "discovered_count": 9
+  },
+  {
+    "name": "fire",
+    "ground_truth_count": 12,
+    "discovered_count": 20
+  },
+  {
+    "name": "safety violation",
+    "ground_truth_count": 14,
+    "discovered_count": 0
+  },
+  {
+    "name": "chemical spill",
+    "ground_truth_count": 7,
+    "discovered_count": 7
+  },
+  {
+    "name": "injury",
+    "ground_truth_count": 10,
+    "discovered_count": 0
+  },
+  {
+    "name": "near miss",
+    "ground_truth_count": 16,
+    "discovered_count": 0
+  },
+  {
+    "name": "electrical",
+    "ground_truth_count": 4,
+    "discovered_count": 5
+  },
+  {
+    "name": "ventilation",
+    "ground_truth_count": 6,
+    "discovered_count": 11
+  },
+  {
+    "name": "falling object",
+    "ground_truth_count": 8,
+    "discovered_count": 0
+  },
+  {
+    "name": "heat exhaustion",
+    "ground_truth_count": 5,
+    "discovered_count": 5
+  },
+  {
+    "name": "beehive",
+    "ground_truth_count": 3,
+    "discovered_count": 3
+  },
+  {
+    "name": "scaffolding",
+    "ground_truth_count": 6,
+    "discovered_count": 6
+  }
 ]
