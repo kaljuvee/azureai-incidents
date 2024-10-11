@@ -53,7 +53,7 @@ def count_incidents(query_incident):
     logging.info(f"Counting incidents for query: '{query_incident}'")
     try:
         # Search for relevant documents, increase top to 50
-        results = list(search_client.search(query_incident, top=50))
+        results = list(search_client.search(query_incident, top=100))
         logging.info(f"Found {len(results)} relevant documents")
         
         if not results:
