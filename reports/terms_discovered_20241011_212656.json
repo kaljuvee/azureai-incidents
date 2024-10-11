@@ -1,0 +1,62 @@
+[
+  {
+    "name": "\"\"\"near miss\"\"\"",
+    "ground_truth_count": 16,
+    "discovered_count": 0
+  },
+  {
+    "name": "\"\"\"safety violation\"\"\"",
+    "ground_truth_count": 14,
+    "discovered_count": 0
+  },
+  {
+    "name": "fire",
+    "ground_truth_count": 12,
+    "discovered_count": 20
+  },
+  {
+    "name": "injury",
+    "ground_truth_count": 10,
+    "discovered_count": 0
+  },
+  {
+    "name": "slip",
+    "ground_truth_count": 9,
+    "discovered_count": 0
+  },
+  {
+    "name": "\"\"\"falling object\"\"\"",
+    "ground_truth_count": 8,
+    "discovered_count": 0
+  },
+  {
+    "name": "\"\"\"chemical spill\"\"\"",
+    "ground_truth_count": 7,
+    "discovered_count": 0
+  },
+  {
+    "name": "ventilation",
+    "ground_truth_count": 6,
+    "discovered_count": 11
+  },
+  {
+    "name": "scaffolding",
+    "ground_truth_count": 6,
+    "discovered_count": 6
+  },
+  {
+    "name": "\"\"\"heat exhaustion\"\"\"",
+    "ground_truth_count": 5,
+    "discovered_count": 0
+  },
+  {
+    "name": "electrical",
+    "ground_truth_count": 4,
+    "discovered_count": 5
+  },
+  {
+    "name": "beehive",
+    "ground_truth_count": 3,
+    "discovered_count": 3
+  }
+]
