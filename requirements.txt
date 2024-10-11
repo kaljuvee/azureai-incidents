@@ -1,0 +1,5 @@
+openai
+python-dotenv
+azure-search-documents 
+azure-ai-textanalytics
+argparse
