@@ -1,0 +1,13 @@
+incident_name_ground_truth,ground_truth_count,incident_name_discovered,count_discovered
+falling object,0,falling object,0
+ventilation,0,ventilation,0
+near miss,0,near miss,0
+scaffolding,0,scaffolding,0
+safety violation,0,safety violation,0
+injury,0,injury,0
+chemical spill,0,chemical spill,0
+electrical,0,electrical,0
+slip,0,slip,0
+beehive,0,beehive,0
+heat exhaustion,0,heat exhaustion,0
+fire,0,fire,0
