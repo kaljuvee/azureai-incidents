@@ -1,13 +1,13 @@
 name,count
-slip,9
-fire,12
-safety violation,14
-chemical spill,7
-injury,10
 near miss,16
-electrical,4
-ventilation,6
+safety violation,14
+fire,12
+injury,10
+slip,9
 falling object,8
-heat exhaustion,5
-beehive,3
+chemical spill,7
+ventilation,6
 scaffolding,6
+heat exhaustion,5
+electrical,4
+beehive,3

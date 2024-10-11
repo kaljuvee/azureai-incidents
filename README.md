@@ -1,6 +1,6 @@
 # Incident Report Generator and Analyzer
 
-This project consists of two main scripts: one for generating synthetic incident reports and another for analyzing them using Azure AI services.
+This project consists of scripts for generating synthetic incident reports and analyzing them using various Azure AI services and OpenAI.
 
 ## Prerequisites
 
@@ -8,6 +8,7 @@ This project consists of two main scripts: one for generating synthetic incident
 - An OpenAI API key
 - Azure AI Search service
 - Azure Text Analytics service
+- Azure OpenAI service
 
 ## Installation
 
@@ -41,6 +42,19 @@ This project consists of two main scripts: one for generating synthetic incident
 
 Create a `.env` file in the root directory of the project with the following content:
 
+```
+OPENAI_API_KEY=your_openai_api_key
+AZURE_SEARCH_ENDPOINT=your_azure_search_endpoint
+AZURE_SEARCH_KEY=your_azure_search_key
+AZURE_TEXT_ANALYTICS_ENDPOINT=your_azure_text_analytics_endpoint
+AZURE_TEXT_ANALYTICS_KEY=your_azure_text_analytics_key
+AZURE_OPENAI_ENDPOINT=your_azure_openai_endpoint
+AZURE_OPENAI_KEY=your_azure_openai_key
+AZURE_OPENAI_DEPLOYMENT=your_azure_openai_deployment
+```
+
+Replace the placeholders with your actual API keys and endpoints. Make sure to keep this file secure and never commit it to version control.
+
 ## Running the Scripts
 
 ### Generating Synthetic Data
@@ -56,39 +70,60 @@ To generate synthetic incident reports:
 
 This script will create synthetic incident reports based on the configuration in `config/incident_type_distribution.json` and save them in the `data/small` directory.
 
-### Running the Azure AI Query Script
+### Running the Analysis Scripts
 
-To analyze the generated incident reports using Azure AI services:
+There are three main scripts for analyzing the generated incident reports:
+
+1. query_azureai.py
+2. query_openai.py
+3. query_azure_search.py
+
+To run any of these scripts:
 
 1. Ensure you're in the project root directory and your virtual environment is activated.
 
-2. Run the query_azureai.py script with the incident type as an argument:
+2. Run the desired script with the incident type as an argument:
    ```
-   python tasks/query_azureai.py <incident_type>
+   python tasks/<script_name>.py <incident_type>
    ```
-   Replace `<incident_type>` with the type of incident you want to query for. For composite terms, use quotes. For example:
+   Replace `<script_name>` with the name of the script you want to run, and `<incident_type>` with the type of incident you want to query for. For composite terms, use quotes. For example:
    ```
    python tasks/query_azureai.py scaffolding
-   python tasks/query_azureai.py "near miss"
+   python tasks/query_openai.py "near miss"
+   python tasks/query_azure_search.py "chemical spill"
    ```
 
-This script will:
-- Create a search index in Azure AI Search
-- Index the generated documents
-- Perform a query to count incidents of the specified type
+### Script Descriptions
+
+1. query_azureai.py:
+   - Creates a search index in Azure AI Search (if not exists)
+   - Indexes the generated documents
+   - Uses Azure AI Search to find relevant documents
+   - Utilizes Azure OpenAI to analyze and count incidents
+
+2. query_openai.py:
+   - Uses Azure AI Search to find relevant documents
+   - Leverages Azure OpenAI to analyze the content and count incidents
+   - Provides a more detailed analysis using the power of large language models
+
+3. query_azure_search.py:
+   - Utilizes Azure AI Search to find relevant documents
+   - Uses Azure Text Analytics to extract key phrases
+   - Counts incidents based on key phrase extraction and content analysis
 
 ### Order of Execution
 
 For the best results, follow this order:
 
 1. Run the `generate_data.py` script first to create the synthetic incident reports.
-2. After the data generation is complete, run the `query_azureai.py` script to analyze the generated reports.
+2. Run the `create_index.py` script to set up the search index and index the documents.
+3. After the data generation and indexing are complete, you can run any of the query scripts (`query_azureai.py`, `query_openai.py`, or `query_azure_search.py`) to analyze the generated reports.
 
 ### Customizing the Scripts
 
 - To change the number of documents generated, modify the `num_documents` variable in `tasks/generate_data.py`.
 - To change the incident type distribution, edit the `config/incident_type_distribution.json` file.
-- To query for different incident types, simply pass the desired incident type as an argument when running `query_azureai.py`.
+- To query for different incident types, simply pass the desired incident type as an argument when running the query scripts.
 
 ### Examples
 
@@ -97,19 +132,24 @@ For the best results, follow this order:
    python tasks/generate_data.py
    ```
 
-2. Query for scaffolding incidents:
+2. Create and populate the search index:
+   ```
+   python tasks/create_index.py
+   ```
+
+3. Query for scaffolding incidents using Azure AI:
    ```
    python tasks/query_azureai.py scaffolding
    ```
 
-3. Query for chemical spill incidents:
+4. Query for chemical spill incidents using OpenAI:
    ```
-   python tasks/query_azureai.py "chemical spill"
+   python tasks/query_openai.py "chemical spill"
    ```
 
-4. Query for near miss incidents:
+5. Query for near miss incidents using Azure Search and Text Analytics:
    ```
-   python tasks/query_azureai.py "near miss"
+   python tasks/query_azure_search.py "near miss"
    ```
 
 Remember to use quotes for incident types that contain spaces.
@@ -117,7 +157,7 @@ Remember to use quotes for incident types that contain spaces.
 ### Viewing Results
 
 - The `generate_data.py` script will log its progress and save the generated reports in the `data/small` directory.
-- The `query_azureai.py` script will output the count of incidents for the specified query to the console and log detailed information about its process.
+- The query scripts will output the count of incidents for the specified query to the console and log detailed information about their processes.
 
 Remember to check the console output and log files for any error messages or important information during the execution of these scripts.
 
