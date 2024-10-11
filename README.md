@@ -66,9 +66,10 @@ To analyze the generated incident reports using Azure AI services:
    ```
    python tasks/query_azureai.py <incident_type>
    ```
-   Replace `<incident_type>` with the type of incident you want to query for. For example:
+   Replace `<incident_type>` with the type of incident you want to query for. For composite terms, use quotes. For example:
    ```
    python tasks/query_azureai.py scaffolding
+   python tasks/query_azureai.py "near miss"
    ```
 
 This script will:
@@ -104,6 +105,11 @@ For the best results, follow this order:
 3. Query for chemical spill incidents:
    ```
    python tasks/query_azureai.py "chemical spill"
+   ```
+
+4. Query for near miss incidents:
+   ```
+   python tasks/query_azureai.py "near miss"
    ```
 
 Remember to use quotes for incident types that contain spaces.

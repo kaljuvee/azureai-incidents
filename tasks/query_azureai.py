@@ -13,7 +13,7 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Global variables
-INDEX_NAME = "incidents-large"
+INDEX_NAME = "incident-small"
 
 # Azure AI Search configuration
 search_endpoint = os.getenv("AZURE_SEARCH_ENDPOINT")
@@ -86,7 +86,7 @@ def main():
     logging.info("Starting the analysis process")
     
     parser = argparse.ArgumentParser(description="Analyze incident reports using Azure AI services.")
-    parser.add_argument("incident_type", help="The type of incident to query for")
+    parser.add_argument("incident_type", type=str, help="The type of incident to query for (use quotes for composite terms)")
     args = parser.parse_args()
 
     try:

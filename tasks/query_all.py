@@ -5,16 +5,11 @@ import csv
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
-from azure.search.documents.indexes.models import (
-    SearchIndex,
-    SimpleField,
-    SearchableField,
-    SearchFieldDataType,
-)
 from azure.ai.textanalytics import TextAnalyticsClient
 from dotenv import load_dotenv
 import base64
 import argparse
+from datetime import datetime
 
 # Load environment variables
 load_dotenv()
@@ -24,7 +19,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 # Global variables
 DATA_DIR = "data/small"
-INDEX_NAME = "incidents-reports"
+INDEX_NAME = "incident-small"
 CONFIG_FILE = "config/incident_type_distribution.json"
 
 # Azure AI Search configuration
@@ -49,27 +44,12 @@ except ValueError as e:
 
 try:
     # Initialize clients
-    search_index_client = SearchIndexClient(endpoint=search_endpoint, credential=search_credential)
     search_client = SearchClient(endpoint=search_endpoint, index_name=INDEX_NAME, credential=search_credential)
     text_analytics_client = TextAnalyticsClient(endpoint=text_analytics_endpoint, credential=text_analytics_credential)
     logging.info("Azure clients initialized successfully")
 except Exception as e:
     logging.error(f"Error initializing Azure clients: {str(e)}")
     raise
-
-def create_search_index():
-    logging.info(f"Creating search index: {INDEX_NAME}")
-    try:
-        fields = [
-            SimpleField(name="id", type=SearchFieldDataType.String, key=True),
-            SearchableField(name="content", type=SearchFieldDataType.String, analyzer_name="en.microsoft"),
-        ]
-        index = SearchIndex(name=INDEX_NAME, fields=fields)
-        result = search_index_client.create_or_update_index(index)
-        logging.info(f"Search index '{INDEX_NAME}' created successfully. Result: {result}")
-    except Exception as e:
-        logging.error(f"Error creating search index: {str(e)}")
-        raise
 
 def encode_filename(filename):
     # Remove the .txt extension, encode to bytes, then to base64, and decode to string
@@ -102,6 +82,9 @@ def read_and_index_documents(input_folder):
         logging.info(f"Indexing complete. Succeeded: {succeeded}, Failed: {failed}")
         if failed > 0:
             logging.warning(f"Some documents failed to index. Check individual results for details.")
+            for r in result:
+                if not r.succeeded:
+                    logging.error(f"Document {r.key} failed to index. Error: {r.error}")
         
         # Add this check to verify documents were indexed
         total_docs = search_client.get_document_count()
@@ -152,7 +135,17 @@ def load_incident_types():
     logging.info(f"Loading incident types from {CONFIG_FILE}")
     try:
         with open(CONFIG_FILE, 'r') as f:
-            return json.load(f)
+            incident_types = json.load(f)
+        
+        # Create a new dictionary with modified keys
+        modified_incident_types = {}
+        for term, count in incident_types.items():
+            if ' ' in term:
+                modified_incident_types[f'"""{term}"""'] = count
+            else:
+                modified_incident_types[term] = count
+        
+        return modified_incident_types
     except Exception as e:
         logging.error(f"Error loading incident types: {str(e)}")
         raise
@@ -160,14 +153,17 @@ def load_incident_types():
 def generate_report(results, output_file):
     logging.info(f"Generating report and saving to {output_file}")
     try:
+        # Generate timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        
         # Save JSON report
-        json_file = output_file
+        json_file = f"{os.path.splitext(output_file)[0]}_{timestamp}.json"
         with open(json_file, 'w') as f:
             json.dump(results, f, indent=2)
         logging.info(f"JSON report saved successfully to {json_file}")
 
         # Save CSV report
-        csv_file = os.path.splitext(output_file)[0] + '.csv'
+        csv_file = f"{os.path.splitext(output_file)[0]}_{timestamp}.csv"
         with open(csv_file, 'w', newline='') as f:
             writer = csv.DictWriter(f, fieldnames=['name', 'ground_truth_count', 'discovered_count'])
             writer.writeheader()
@@ -187,14 +183,15 @@ def main():
     args = parser.parse_args()
 
     try:
-        # Create search index
-        create_search_index()
-
         # Read and index documents
+        logging.info("Starting document indexing process")
         read_and_index_documents(DATA_DIR)
+        logging.info("Document indexing process completed")
 
         # Load incident types
+        logging.info("Loading incident types")
         incident_types = load_incident_types()
+        logging.info(f"Loaded {len(incident_types)} incident types")
 
         results = []
         for incident_type, ground_truth_count in incident_types.items():
@@ -212,11 +209,12 @@ def main():
             logging.info(f"Analysis complete for '{incident_type}'. Ground truth: {ground_truth_count}, Discovered: {discovered_count}")
 
         # Generate report
+        logging.info("Generating final report")
         generate_report(results, args.output)
 
         logging.info("Analysis complete for all incident types.")
-        print(f"Analysis complete. JSON report saved to {args.output}")
-        print(f"CSV report saved to {os.path.splitext(args.output)[0] + '.csv'}")
+        print(f"Analysis complete. Reports saved with timestamp.")
+        print(f"Check the 'reports' directory for the generated JSON and CSV files.")
     except Exception as e:
         logging.error(f"An error occurred during the main process: {str(e)}")
         print(f"An error occurred. Please check the logs for details.")

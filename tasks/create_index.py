@@ -8,6 +8,7 @@ from azure.search.documents.indexes.models import (
     SimpleField,
     SearchableField,
     SearchFieldDataType,
+    CustomAnalyzer,
 )
 from dotenv import load_dotenv
 import base64
@@ -37,8 +38,8 @@ except ValueError as e:
 
 try:
     # Initialize clients
-    search_index_client = SearchIndexClient(endpoint=search_endpoint, credential=search_credential)
-    search_client = SearchClient(endpoint=search_endpoint, index_name=INDEX_NAME, credential=search_credential)
+    search_index_client = SearchIndexClient(endpoint=search_endpoint, credential=search_credential, api_version="2023-10-01-Preview")
+    search_client = SearchClient(endpoint=search_endpoint, index_name=INDEX_NAME, credential=search_credential, api_version="2023-10-01-Preview")
     logging.info("Azure clients initialized successfully")
 except Exception as e:
     logging.error(f"Error initializing Azure clients: {str(e)}")
@@ -47,11 +48,28 @@ except Exception as e:
 def create_search_index():
     logging.info(f"Creating search index: {INDEX_NAME}")
     try:
+        # Define a custom analyzer
+        custom_analyzer = CustomAnalyzer(
+            name="custom_analyzer",
+            tokenizer_name="microsoft_language_tokenizer",
+            token_filters=["lowercase"]
+        )
+
         fields = [
             SimpleField(name="id", type=SearchFieldDataType.String, key=True),
-            SearchableField(name="content", type=SearchFieldDataType.String, analyzer_name="en.microsoft"),
+            SearchableField(
+                name="content",
+                type=SearchFieldDataType.String,
+                analyzer_name="custom_analyzer"
+            ),
         ]
-        index = SearchIndex(name=INDEX_NAME, fields=fields)
+        
+        # Create the index with the custom analyzer
+        index = SearchIndex(
+            name=INDEX_NAME,
+            fields=fields,
+            analyzers=[custom_analyzer]
+        )
         result = search_index_client.create_or_update_index(index)
         logging.info(f"Search index '{INDEX_NAME}' created successfully. Result: {result}")
     except Exception as e:
@@ -90,17 +108,42 @@ def read_and_index_documents(input_folder):
         if failed > 0:
             logging.warning(f"Some documents failed to index. Check individual results for details.")
         
-        # Add this check to verify documents were indexed
-        total_docs = search_client.get_document_count()
-        logging.info(f"Total documents in index after indexing: {total_docs}")
+        # Add a delay before checking the document count
+        import time
+        time.sleep(10)  # Wait for 10 seconds
+
+        # Check document count multiple times
+        for i in range(5):
+            total_docs = search_client.get_document_count()
+            logging.info(f"Attempt {i+1}: Total documents in index after indexing: {total_docs}")
+            if total_docs > 0:
+                break
+            time.sleep(5)  # Wait for 5 seconds between attempts
+
+        if total_docs == 0:
+            logging.error("No documents found in the index after multiple attempts.")
     except Exception as e:
         logging.error(f"Error in read_and_index_documents: {str(e)}")
         raise
+
+def delete_index_if_exists():
+    try:
+        search_index_client.delete_index(INDEX_NAME)
+        logging.info(f"Existing index '{INDEX_NAME}' deleted successfully.")
+    except Exception as e:
+        if "ResourceNotFound" not in str(e):
+            logging.error(f"Error deleting index: {str(e)}")
+            raise
+        else:
+            logging.info(f"Index '{INDEX_NAME}' does not exist. Proceeding with creation.")
 
 def main():
     logging.info("Starting the index creation and document upload process")
 
     try:
+        # Delete existing index if it exists
+        delete_index_if_exists()
+
         # Create search index
         create_search_index()
 

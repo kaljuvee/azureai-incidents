@@ -1,0 +1,13 @@
+name,ground_truth_count,discovered_count
+slip,9,9
+fire,12,20
+"""""""safety violation""""""",14,0
+"""""""chemical spill""""""",7,0
+injury,10,0
+"""""""near miss""""""",16,0
+electrical,4,5
+ventilation,6,11
+"""""""falling object""""""",8,0
+"""""""heat exhaustion""""""",5,0
+beehive,3,3
+scaffolding,6,6
