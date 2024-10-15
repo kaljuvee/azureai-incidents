@@ -250,3 +250,9 @@ For the best results, follow this order:
 5. Use `query_azureai.py` for specific incident type queries.
 
 Remember to check the console output and log files for any error messages or important information during the execution of these scripts.
+
+Notes:
+- Consider Azure AI search strictiness parameter.
+- When generating data, add ID to the document, so the query returns the ID back.
+- Generate Parquet files for synthetic data.
+- Try different search strategies for Azure Search.

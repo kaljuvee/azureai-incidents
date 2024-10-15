@@ -1,0 +1,39 @@
+incident_name,count
+Chemical spill,2
+Beehive in ventilation system,2
+Safety violation,1
+Employee injury,1
+Near-miss collision,1
+Equipment malfunction,1
+Falling object,1
+Heat exhaustion,1
+Fire,1
+Safety guard bypass,1
+Unauthorized removal of machine guard,1
+Malfunctioning safety sensor,1
+Employee slip and fall,1
+Scaffolding collapse,1
+slip and fall,1
+fire,1
+safety violation,1
+chemical spill,1
+machine-related injury,1
+near-miss collision,1
+unexpected equipment activation,1
+ventilation system malfunction,1
+Overhead piping detachment,1
+Fire in assembly area,1
+Fire in packaging section,1
+Machine operator bypassing safety guard,1
+Employee slipping on wet floor,1
+Hand injury due to inadequate machine safeguarding,1
+Near miss with unshielded high-voltage cable,1
+Near-miss collision involving forklift and pallet,1
+Bypassing safety protocols,1
+Hand injury while clearing jam,1
+Near-miss collision involving forklift and improperly stored pallets,1
+Near-miss collision involving forklift and unmarked pallet,1
+Falling object during equipment adjustment,1
+Scaffolding collapse during maintenance,1
+Slip and fall on unmarked wet floor,1
+Bypassing safety guard resulting in injury,1
